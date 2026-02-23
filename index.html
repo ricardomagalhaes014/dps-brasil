@@ -479,105 +479,201 @@
 <section class="section-simulador" id="simulador">
   <div class="container">
     <div class="section-header">
-      <div class="section-badge">Ferramenta Exclusiva</div>
+      <span class="section-tag">Simulador</span>
       <h2>Simulador de Investimento</h2>
-      <p class="section-subtitle">Calcule o potencial de retorno do seu investimento em Itapema</p>
+      <p>Calcule o seu potencial de retorno com os nossos empreendimentos.</p>
     </div>
-    <div class="simulador-wrapper">
-      <div class="simulador-form">
-        <div class="form-group">
-          <label>Empreendimento</label>
-          <select id="sim-empreendimento">
-            <option value="morata">Residencial Morata</option>
-            <option value="evidence">Evidence Residence</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Valor do Imóvel (R$)</label>
-          <input type="number" id="sim-valor" value="450000" min="100000" step="10000" />
-        </div>
-        <div class="form-group">
-          <label>Entrada (%)</label>
-          <input type="range" id="sim-entrada-range" min="10" max="50" value="20" oninput="document.getElementById('sim-entrada-pct').value=this.value; calcularSimulacao()" />
-          <div class="range-display">
-            <input type="number" id="sim-entrada-pct" value="20" min="10" max="50" oninput="document.getElementById('sim-entrada-range').value=this.value; calcularSimulacao()" />
-            <span>%</span>
+
+    <!-- Tabs PT / BR -->
+    <div style="text-align:center; margin: 10px 0 24px 0; font-family:Arial, sans-serif;">
+      <button onclick="mostrarSimulador('pt')" id="btnPT"
+        style="padding:10px 16px; margin: 0 6px; border-radius:8px; border:1px solid #444; cursor:pointer; background:gold; color:#000; font-weight:700;">
+        Portugal
+      </button>
+      <button onclick="mostrarSimulador('br')" id="btnBR"
+        style="padding:10px 16px; margin: 0 6px; border-radius:8px; border:1px solid #444; cursor:pointer; background:#222; color:#fff; font-weight:700;">
+        Brasil
+      </button>
+    </div>
+
+    <!-- SIMULADOR PORTUGAL (original) -->
+    <div id="simPT">
+      <div class="simulador-wrapper">
+        <div class="simulador-form">
+          <div class="form-group">
+            <label>Empreendimento</label>
+            <select id="sim-empreendimento" onchange="calcularSimulacao()">
+              <option value="morata" data-valor="450000">Residencial Morata — R$ 450.000</option>
+              <option value="sky" data-valor="280000">Sky Marine — R$ 280.000</option>
+            </select>
           </div>
+          <div class="form-group">
+            <label>Entrada (%)</label>
+            <input type="range" id="sim-entrada-range" min="10" max="50" value="20" oninput="document.getElementById('sim-entrada-pct').value=this.value; calcularSimulacao()" />
+            <div class="range-display">
+              <input type="number" id="sim-entrada-pct" value="20" min="10" max="50" oninput="document.getElementById('sim-entrada-range').value=this.value; calcularSimulacao()" />
+              <span>%</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Prazo de Obra (meses)</label>
+            <select id="sim-prazo">
+              <option value="36">36 meses</option>
+              <option value="48" selected>48 meses</option>
+              <option value="60">60 meses</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Valorização Esperada (%/ano)</label>
+            <input type="range" id="sim-valorizacao-range" min="5" max="30" value="15" oninput="document.getElementById('sim-valorizacao-pct').value=this.value; calcularSimulacao()" />
+            <div class="range-display">
+              <input type="number" id="sim-valorizacao-pct" value="15" min="5" max="30" oninput="document.getElementById('sim-valorizacao-range').value=this.value; calcularSimulacao()" />
+              <span>%/ano</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Modalidade</label>
+            <select id="sim-modalidade">
+              <option value="revenda">Revenda após entrega</option>
+              <option value="arrendamento">Arrendamento anual</option>
+              <option value="temporada">Arrendamento de temporada</option>
+            </select>
+          </div>
+          <button class="btn-primary btn-full" onclick="calcularSimulacao()">Calcular Simulação</button>
         </div>
-        <div class="form-group">
-          <label>Prazo de Obra (meses)</label>
-          <select id="sim-prazo">
-            <option value="36">36 meses</option>
-            <option value="48" selected>48 meses</option>
-            <option value="60">60 meses</option>
-          </select>
+        <div class="simulador-resultado" id="sim-resultado">
+          <div class="resultado-header">
+            <h3>Resultado da Simulação</h3>
+            <span id="sim-emp-nome">Residencial Morata</span>
+          </div>
+          <div class="resultado-grid">
+            <div class="resultado-item">
+              <span class="resultado-label">Valor do Imóvel</span>
+              <span class="resultado-value" id="res-valor">R$ 450.000</span>
+            </div>
+            <div class="resultado-item">
+              <span class="resultado-label">Entrada</span>
+              <span class="resultado-value" id="res-entrada">R$ 90.000</span>
+            </div>
+            <div class="resultado-item">
+              <span class="resultado-label">Parcelas durante obra</span>
+              <span class="resultado-value" id="res-parcelas">R$ 7.500/mês</span>
+            </div>
+            <div class="resultado-item highlight">
+              <span class="resultado-label">Valor na Entrega (estimado)</span>
+              <span class="resultado-value" id="res-valor-entrega">R$ 720.000</span>
+            </div>
+            <div class="resultado-item highlight">
+              <span class="resultado-label">Lucro Estimado</span>
+              <span class="resultado-value green" id="res-lucro">R$ 270.000</span>
+            </div>
+            <div class="resultado-item">
+              <span class="resultado-label">Retorno sobre Investimento</span>
+              <span class="resultado-value green" id="res-roi">60%</span>
+            </div>
+            <div class="resultado-item" id="res-renda-item">
+              <span class="resultado-label">Renda Mensal Estimada</span>
+              <span class="resultado-value" id="res-renda">R$ 2.700/mês</span>
+            </div>
+          </div>
+          <div class="resultado-disclaimer">
+            * Simulação meramente indicativa com base em dados históricos do mercado de Itapema. Valores reais podem variar. Consulte um especialista.
+          </div>
+          <a href="https://wa.me/925610864?text=Ol%C3%A1!%20Fiz%20uma%20simula%C3%A7%C3%A3o%20no%20vosso%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20o%20investimento%20em%20Itapema." target="_blank" class="btn-primary btn-full" style="margin-top:1rem">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Falar com um Especialista
+          </a>
         </div>
-        <div class="form-group">
-          <label>Valorização Esperada (%/ano)</label>
-          <input type="range" id="sim-valorizacao-range" min="5" max="30" value="15" oninput="document.getElementById('sim-valorizacao-pct').value=this.value; calcularSimulacao()" />
-          <div class="range-display">
-            <input type="number" id="sim-valorizacao-pct" value="15" min="5" max="30" oninput="document.getElementById('sim-valorizacao-range').value=this.value; calcularSimulacao()" />
-            <span>%/ano</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Modalidade</label>
-          <select id="sim-modalidade">
-            <option value="revenda">Revenda após entrega</option>
-            <option value="arrendamento">Arrendamento anual</option>
-            <option value="temporada">Arrendamento de temporada</option>
-          </select>
-        </div>
-        <button class="btn-primary btn-full" onclick="calcularSimulacao()">Calcular Simulação</button>
-      </div>
-      <div class="simulador-resultado" id="sim-resultado">
-        <div class="resultado-header">
-          <h3>Resultado da Simulação</h3>
-          <span id="sim-emp-nome">Residencial Morata</span>
-        </div>
-        <div class="resultado-grid">
-          <div class="resultado-item">
-            <span class="resultado-label">Valor do Imóvel</span>
-            <span class="resultado-value" id="res-valor">R$ 450.000</span>
-          </div>
-          <div class="resultado-item">
-            <span class="resultado-label">Entrada</span>
-            <span class="resultado-value" id="res-entrada">R$ 90.000</span>
-          </div>
-          <div class="resultado-item">
-            <span class="resultado-label">Parcelas durante obra</span>
-            <span class="resultado-value" id="res-parcelas">R$ 7.500/mês</span>
-          </div>
-          <div class="resultado-item highlight">
-            <span class="resultado-label">Valor na Entrega (estimado)</span>
-            <span class="resultado-value" id="res-valor-entrega">R$ 720.000</span>
-          </div>
-          <div class="resultado-item highlight">
-            <span class="resultado-label">Lucro Estimado</span>
-            <span class="resultado-value green" id="res-lucro">R$ 270.000</span>
-          </div>
-          <div class="resultado-item">
-            <span class="resultado-label">Retorno sobre Investimento</span>
-            <span class="resultado-value green" id="res-roi">60%</span>
-          </div>
-          <div class="resultado-item" id="res-renda-item">
-            <span class="resultado-label">Renda Mensal Estimada</span>
-            <span class="resultado-value" id="res-renda">R$ 2.700/mês</span>
-          </div>
-        </div>
-        <div class="resultado-disclaimer">
-          * Simulação meramente indicativa com base em dados históricos do mercado de Itapema. Valores reais podem variar. Consulte um especialista.
-        </div>
-        <a href="https://wa.me/925610864?text=Olá!%20Fiz%20uma%20simulação%20no%20vosso%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20o%20investimento%20em%20Itapema." target="_blank" class="btn-primary btn-full" style="margin-top:1rem">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Falar com um Especialista
-        </a>
       </div>
     </div>
+
+    <!-- SIMULADOR BRASIL (novo) -->
+    <div id="simBR" style="display:none;">
+      <div style="display:flex; flex-direction:row; justify-content:center; align-items:flex-start; gap:40px; flex-wrap:wrap; font-family:Arial, sans-serif;">
+        <!-- Texto Lateral -->
+        <div style="min-width:200px; text-align:center;">
+          <h2 style="color:gold; animation:blink 1s infinite;">Simule já</h2>
+          <p style="color:white;">
+            Envie a sua proposta para<br>
+            <a href="https://wa.me/message/RVQEKYZDZSPZL1" target="_blank" rel="noopener" style="color:#00ffcc;">
+              WhatsApp DPS Imobiliário
+            </a>
+          </p>
+          <button onclick="enviarWhatsAppBR()"
+            style="padding:10px 20px; background-color:#25D366; color:white; border:none; border-radius:5px; cursor:pointer;">
+            Enviar por WhatsApp
+          </button>
+          <p style="color:white; margin-top:10px;">
+            DPS Imobiliário<br>Você simula, nós realizamos para si
+          </p>
+        </div>
+
+        <!-- Formulário -->
+        <div style="max-width:650px; background-color:#1a1a1a; padding:20px; border-radius:10px; color:white;">
+          <h2 style="color:white;">Simulador (Brasil) — Parcelas + Anuidades + Cessão</h2>
+
+          <label>Valor do Imóvel (R$):<br>
+            <input type="number" id="valorImovel_BR" value="370000" min="1" required oninput="syncChavesBR(); calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          </label><br><br>
+
+          <label>Entrada (mínimo 10%):<br>
+            <input type="number" id="entrada_BR" value="37000" min="1" required oninput="calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          </label><br><br>
+
+          <label>Chaves (10% do valor total — automático):<br>
+            <input type="number" id="chaves_BR" value="37000" min="1" required readonly style="opacity:0.85; width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          </label><br><br>
+
+          <label>Número de parcelas mensais:<br>
+            <select id="mensalidades_BR" onchange="calcularBR();" style="padding:8px; border-radius:6px; width:100%; margin-top:4px;">
+              <option value="100">100</option>
+              <option value="120">120</option>
+              <option value="140" selected>140</option>
+            </select>
+          </label><br><br>
+
+          <label>Valor da Anuidade (R$) — você define:<br>
+            <input type="number" id="anuidade_BR" value="7333.33" min="0" step="0.01" oninput="calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          </label><br><br>
+
+          <label>Número de Anuidades:<br>
+            <input type="number" id="numAnuidades_BR" value="12" min="0" max="60" oninput="calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          </label><br><br>
+
+          <hr style="border:0; border-top:1px solid #333; margin:18px 0;">
+
+          <label>Valorização ao ano (%):<br>
+            <input type="number" id="valorizacaoAno_BR" value="18" min="0" step="0.01" oninput="calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          </label><br><br>
+
+          <label>Mês em que pretende ceder posição (vender):<br>
+            <input type="number" id="mesVenda_BR" value="24" min="0" max="140" oninput="calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          </label><br><br>
+
+          <label>Taxa de Câmbio R$ → € (opcional):<br>
+            <input type="number" id="cambio_BR" placeholder="Ex: 6.50" step="0.01" min="0" oninput="calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          </label><br><br>
+
+          <button onclick="calcularBR()"
+            style="padding:10px 20px; background-color:#00a859; color:white; border:none; border-radius:5px; cursor:pointer; font-size:15px; font-weight:700;">
+            Calcular
+          </button>
+
+          <h3 style="margin-top:20px;">Resultado:</h3>
+          <div id="resultado_BR" style="background:#fff; color:#000; padding:10px; border-radius:5px; line-height:1.8;"></div>
+        </div>
+      </div>
+
+      <!-- Resumo cessão -->
+      <div style="max-width:1000px; margin:30px auto; background-color:#1a1a1a; padding:20px; border-radius:10px; color:white; font-family:Arial, sans-serif;">
+        <h2 style="color:gold;">Cessão de posição (Brasil) — resumo</h2>
+        <div id="rentabilidade_BR" style="background:#fff; color:#000; padding:10px; border-radius:5px; line-height:1.8;"></div>
+      </div>
+    </div>
+
   </div>
 </section>
 
-<!-- CONTACTO -->
 <section class="section-contacto" id="contacto">
   <div class="container">
     <div class="section-header light">
@@ -666,5 +762,166 @@
 </div>
 
 <script src="script.js"></script>
+
+<style>
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+</style>
+<script>
+/* Tabs PT / BR */
+function mostrarSimulador(pais) {
+  var simPT = document.getElementById("simPT");
+  var simBR = document.getElementById("simBR");
+  var btnPT = document.getElementById("btnPT");
+  var btnBR = document.getElementById("btnBR");
+  if (pais === "br") {
+    simPT.style.display = "none";
+    simBR.style.display = "block";
+    btnBR.style.background = "gold";
+    btnBR.style.color = "#000";
+    btnPT.style.background = "#222";
+    btnPT.style.color = "#fff";
+  } else {
+    simPT.style.display = "block";
+    simBR.style.display = "none";
+    btnPT.style.background = "gold";
+    btnPT.style.color = "#000";
+    btnBR.style.background = "#222";
+    btnBR.style.color = "#fff";
+  }
+}
+
+/* Helpers */
+function moedaBR(valor, isEuro) {
+  var prefixo = isEuro ? "€ " : "R$ ";
+  return prefixo + (Number(valor) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+/* Chaves = 10% do total (auto) */
+function syncChavesBR() {
+  var valorImovel = parseFloat(document.getElementById("valorImovel_BR").value) || 0;
+  var chavesAuto = valorImovel * 0.10;
+  var el = document.getElementById("chaves_BR");
+  if (el) el.value = chavesAuto.toFixed(2);
+}
+
+/* BRASIL (NOVO) */
+function calcularBR() {
+  var valorImovel = parseFloat(document.getElementById("valorImovel_BR").value) || 0;
+  var entrada = parseFloat(document.getElementById("entrada_BR").value) || 0;
+  var chaves = valorImovel * 0.10;
+  var elCh = document.getElementById("chaves_BR");
+  if (elCh) elCh.value = chaves.toFixed(2);
+  var parcelas = parseInt(document.getElementById("mensalidades_BR").value, 10) || 0;
+  var anuidade = parseFloat(document.getElementById("anuidade_BR").value) || 0;
+  var numAnuidades = parseInt(document.getElementById("numAnuidades_BR").value, 10) || 0;
+  var valorizacaoAno = parseFloat(document.getElementById("valorizacaoAno_BR").value) || 0;
+  var mesVenda = parseInt(document.getElementById("mesVenda_BR").value, 10) || 0;
+  var cambio = parseFloat(document.getElementById("cambio_BR").value);
+  var isEuro = !isNaN(cambio) && cambio > 0;
+  var conv = function(v) { return isEuro ? (v / cambio) : v; };
+
+  if (valorImovel <= 0) { alert("Informe um valor de imóvel válido."); return; }
+  if (entrada < valorImovel * 0.10) { alert("A entrada deve ser no mínimo 10% do valor do imóvel."); return; }
+  if (!parcelas || parcelas < 1) { alert("Selecione o número de parcelas (100, 120 ou 140)."); return; }
+
+  mesVenda = clamp(mesVenda, 0, parcelas);
+  document.getElementById("mesVenda_BR").max = String(parcelas);
+
+  var baseMensal = valorImovel - entrada - chaves;
+  var mensalidade = baseMensal / parcelas;
+  var anuidadesPagas = clamp(Math.floor(mesVenda / 12), 0, numAnuidades);
+  var totalAnuidadesPagas = anuidadesPagas * anuidade;
+  var mensalidadesPagas = mesVenda * mensalidade;
+  var chavesPagas = (mesVenda >= parcelas) ? chaves : 0;
+  var investidoAte = entrada + mensalidadesPagas + totalAnuidadesPagas + chavesPagas;
+  var taxaMensal = (valorizacaoAno / 100) / 12;
+  var valorizacaoPeriodo = taxaMensal * mesVenda;
+  var valorEstimado = valorImovel * (1 + valorizacaoPeriodo);
+  var lucro = valorEstimado - investidoAte;
+  var mesesRestantes = Math.max(parcelas - mesVenda, 0);
+  var mensalidadesRestantes = mesesRestantes * mensalidade;
+  var anuidadesRestantes = Math.max(numAnuidades - anuidadesPagas, 0);
+  var totalAnuidadesRestantes = anuidadesRestantes * anuidade;
+  var chavesRestantes = (mesVenda < parcelas) ? chaves : 0;
+  var saldoRestante = mensalidadesRestantes + totalAnuidadesRestantes + chavesRestantes;
+
+  var resultadoHTML =
+    "<strong>Valor do Imóvel:</strong> " + moedaBR(conv(valorImovel), isEuro) + "<br>" +
+    "<strong>Entrada:</strong> " + moedaBR(conv(entrada), isEuro) + "<br>" +
+    "<strong>Chaves (10%):</strong> " + moedaBR(conv(chaves), isEuro) + "<br><br>" +
+    "<strong>Parcelas mensais:</strong> " + parcelas + "<br>" +
+    "<strong>Mensalidade calculada:</strong> " + moedaBR(conv(mensalidade), isEuro) + "<br><br>" +
+    "<strong>Anuidade:</strong> " + moedaBR(conv(anuidade), isEuro) + "<br>" +
+    "<strong>Anuidades no contrato:</strong> " + numAnuidades + "<br>" +
+    "<strong>Anuidades pagas até o mês " + mesVenda + ":</strong> " + anuidadesPagas + " (" + moedaBR(conv(totalAnuidadesPagas), isEuro) + ")<br><br>" +
+    "<strong><u>Investido até o mês " + mesVenda + ":</u></strong> " + moedaBR(conv(investidoAte), isEuro) + "<br>" +
+    "<strong>Valorização ao ano:</strong> " + valorizacaoAno.toFixed(2) + "%<br>" +
+    "<strong>Valor estimado no mês " + mesVenda + " (linear):</strong> " + moedaBR(conv(valorEstimado), isEuro) + "<br>" +
+    "<strong><u>Lucro estimado na cessão:</u></strong> " + moedaBR(conv(lucro), isEuro);
+  document.getElementById("resultado_BR").innerHTML = resultadoHTML;
+
+  var rentabilidadeHTML =
+    "<strong>Na cessão de posição, o novo comprador paga ao investidor:</strong><br>" +
+    moedaBR(conv(investidoAte), isEuro) + " (reembolso do que já pagou)" +
+    " + " + moedaBR(conv(lucro), isEuro) + " (valorização) = <strong>" + moedaBR(conv(valorEstimado), isEuro) + "</strong><br><br>" +
+    "<strong>O novo comprador assume o restante do contrato:</strong><br>" +
+    "• Mensalidades restantes (" + mesesRestantes + "): " + moedaBR(conv(mensalidadesRestantes), isEuro) + "<br>" +
+    "• Anuidades restantes (" + anuidadesRestantes + "): " + moedaBR(conv(totalAnuidadesRestantes), isEuro) + "<br>" +
+    "• Chaves restantes: " + moedaBR(conv(chavesRestantes), isEuro) + "<br>" +
+    "<strong><u>Saldo restante total:</u></strong> " + moedaBR(conv(saldoRestante), isEuro);
+  document.getElementById("rentabilidade_BR").innerHTML = rentabilidadeHTML;
+}
+
+/* WhatsApp BR */
+function enviarWhatsAppBR() {
+  var valorImovel = parseFloat(document.getElementById("valorImovel_BR").value) || 0;
+  var entrada = parseFloat(document.getElementById("entrada_BR").value) || 0;
+  var parcelas = parseInt(document.getElementById("mensalidades_BR").value, 10) || 0;
+  var anuidade = parseFloat(document.getElementById("anuidade_BR").value) || 0;
+  var numAnuidades = parseInt(document.getElementById("numAnuidades_BR").value, 10) || 0;
+  var valorizacaoAno = parseFloat(document.getElementById("valorizacaoAno_BR").value) || 0;
+  var mesVenda = parseInt(document.getElementById("mesVenda_BR").value, 10) || 0;
+  var chaves = valorImovel * 0.10;
+  mesVenda = clamp(mesVenda, 0, parcelas);
+  var mensalidade = (valorImovel - entrada - chaves) / parcelas;
+  var anuidadesPagas = clamp(Math.floor(mesVenda / 12), 0, numAnuidades);
+  var totalAnuidadesPagas = anuidadesPagas * anuidade;
+  var mensalidadesPagas = mesVenda * mensalidade;
+  var chavesPagas = (mesVenda >= parcelas) ? chaves : 0;
+  var investidoAte = entrada + mensalidadesPagas + totalAnuidadesPagas + chavesPagas;
+  var taxaMensal = (valorizacaoAno / 100) / 12;
+  var valorEstimado = valorImovel * (1 + (taxaMensal * mesVenda));
+  var lucro = valorEstimado - investidoAte;
+
+  var msg = "Simulação (Brasil) — Parcelas + Anuidades + Cessão\n\n" +
+    "Imóvel: R$ " + valorImovel.toLocaleString('pt-BR') + "\n" +
+    "Entrada: R$ " + entrada.toLocaleString('pt-BR') + "\n" +
+    "Chaves (10%): R$ " + chaves.toLocaleString('pt-BR') + "\n" +
+    "Parcelas: " + parcelas + "\n" +
+    "Mensalidade calculada: R$ " + mensalidade.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + "\n\n" +
+    "Anuidade: R$ " + anuidade.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + "\n" +
+    "Nº Anuidades: " + numAnuidades + "\n" +
+    "Anuidades pagas até mês " + mesVenda + ": " + anuidadesPagas + " (R$ " + totalAnuidadesPagas.toLocaleString('pt-BR') + ")\n\n" +
+    "Ceder posição no mês: " + mesVenda + "\n" +
+    "Valorização/ano: " + valorizacaoAno.toFixed(2) + "%\n" +
+    "Investido até ao mês " + mesVenda + ": R$ " + investidoAte.toLocaleString('pt-BR') + "\n" +
+    "Valor estimado no mês " + mesVenda + ": R$ " + valorEstimado.toLocaleString('pt-BR') + "\n" +
+    "Lucro estimado: R$ " + lucro.toLocaleString('pt-BR') + "\n\n" +
+    "Quero mais informações.";
+
+  var url = "https://wa.me/351925708456?text=" + encodeURIComponent(msg);
+  window.open(url, "_blank", "noopener");
+}
+
+/* Inicialização */
+document.addEventListener("DOMContentLoaded", function() {
+  syncChavesBR();
+  calcularBR();
+});
+</script>
 </body>
 </html>
