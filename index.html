@@ -530,6 +530,9 @@
               <option value="140" selected>140</option>
             </select>
           </label><br><br>
+          <label>Mensalidade (calculada automaticamente):<br>
+            <input type="text" id="mensalidade_BR_display" readonly value="" style="width:100%; padding:8px; border-radius:6px; margin-top:4px; background:#1a2a1a; color:#7fff7f; font-weight:700; border:1px solid #2a4a2a; cursor:default;">
+          </label><br><br>
 
           <label>Valor da Anuidade (R$) — você define:<br>
             <input type="number" id="anuidade_BR" value="7333.33" min="0" step="0.01" oninput="calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
@@ -713,6 +716,9 @@ function calcularBR() {
 
   var baseMensal = valorImovel - entrada - chaves;
   var mensalidade = baseMensal / parcelas;
+  // Atualizar display da mensalidade
+  var elMensDisplay = document.getElementById("mensalidade_BR_display");
+  if (elMensDisplay) elMensDisplay.value = "R$ " + mensalidade.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
   var anuidadesPagas = clamp(Math.floor(mesVenda / 12), 0, numAnuidades);
   var totalAnuidadesPagas = anuidadesPagas * anuidade;
   var mensalidadesPagas = mesVenda * mensalidade;
