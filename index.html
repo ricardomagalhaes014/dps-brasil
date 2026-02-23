@@ -679,9 +679,13 @@ function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
 /* Chaves = 10% do total (auto) */
 function syncChavesBR() {
   var valorImovel = parseFloat(document.getElementById("valorImovel_BR").value) || 0;
-  var chavesAuto = valorImovel * 0.10;
-  var el = document.getElementById("chaves_BR");
-  if (el) el.value = chavesAuto.toFixed(2);
+  var auto10 = valorImovel * 0.10;
+  // Chaves: 10% automático
+  var elChaves = document.getElementById("chaves_BR");
+  if (elChaves) elChaves.value = auto10.toFixed(2);
+  // Entrada: 10% automático
+  var elEntrada = document.getElementById("entrada_BR");
+  if (elEntrada) elEntrada.value = auto10.toFixed(2);
 }
 
 /* BRASIL (NOVO) */
