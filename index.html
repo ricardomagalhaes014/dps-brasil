@@ -723,11 +723,11 @@ function calcularBR() {
   var totalAnuidadesPagas = anuidadesPagas * anuidade;
   var mensalidadesPagas = mesVenda * mensalidade;
   var chavesPagas = (mesVenda >= parcelas) ? chaves : 0;
-  var investidoAte = entrada + mensalidadesPagas + totalAnuidadesPagas + chavesPagas;
+  var investidoAte = entrada + mensalidadesPagas + totalAnuidadesPagas;
   var taxaMensal = (valorizacaoAno / 100) / 12;
   var valorizacaoPeriodo = taxaMensal * mesVenda;
   var valorEstimado = valorImovel * (1 + valorizacaoPeriodo);
-  var lucro = valorEstimado - investidoAte;
+  var lucro = valorEstimado - valorImovel;
   var mesesRestantes = Math.max(parcelas - mesVenda, 0);
   var mensalidadesRestantes = mesesRestantes * mensalidade;
   var anuidadesRestantes = Math.max(numAnuidades - anuidadesPagas, 0);
@@ -744,16 +744,16 @@ function calcularBR() {
     "<strong>Anuidade:</strong> " + moedaBR(conv(anuidade), isEuro) + "<br>" +
     "<strong>Anuidades no contrato:</strong> " + numAnuidades + "<br>" +
     "<strong>Anuidades pagas até o mês " + mesVenda + ":</strong> " + anuidadesPagas + " (" + moedaBR(conv(totalAnuidadesPagas), isEuro) + ")<br><br>" +
-    "<strong><u>Investido até o mês " + mesVenda + ":</u></strong> " + moedaBR(conv(investidoAte), isEuro) + "<br>" +
+    "<strong><u>Investimento até o mês " + mesVenda + " (Entrada + Parcelas + Anuidades):</u></strong> " + moedaBR(conv(investidoAte), isEuro) + "<br>" +
     "<strong>Valorização ao ano:</strong> " + valorizacaoAno.toFixed(2) + "%<br>" +
     "<strong>Valor estimado no mês " + mesVenda + " (linear):</strong> " + moedaBR(conv(valorEstimado), isEuro) + "<br>" +
-    "<strong><u>Lucro estimado na cessão:</u></strong> " + moedaBR(conv(lucro), isEuro);
+    "<strong><u>Lucro estimado na cessão (Valor estimado − Valor de compra):</u></strong> " + moedaBR(conv(lucro), isEuro);
   document.getElementById("resultado_BR").innerHTML = resultadoHTML;
 
   var rentabilidadeHTML =
     "<strong>Na cessão de posição, o novo comprador paga ao investidor:</strong><br>" +
-    moedaBR(conv(investidoAte), isEuro) + " (reembolso do que já pagou)" +
-    " + " + moedaBR(conv(lucro), isEuro) + " (valorização) = <strong>" + moedaBR(conv(valorEstimado), isEuro) + "</strong><br><br>" +
+    moedaBR(conv(investidoAte), isEuro) + " (reembolso do investimento feito)" +
+    " + " + moedaBR(conv(lucro), isEuro) + " (lucro da valorização) = <strong>" + moedaBR(conv(investidoAte + lucro), isEuro) + "</strong><br><br>" +
     "<strong>O novo comprador assume o restante do contrato:</strong><br>" +
     "• Mensalidades restantes (" + mesesRestantes + "): " + moedaBR(conv(mensalidadesRestantes), isEuro) + "<br>" +
     "• Anuidades restantes (" + anuidadesRestantes + "): " + moedaBR(conv(totalAnuidadesRestantes), isEuro) + "<br>" +
@@ -778,10 +778,10 @@ function enviarWhatsAppBR() {
   var totalAnuidadesPagas = anuidadesPagas * anuidade;
   var mensalidadesPagas = mesVenda * mensalidade;
   var chavesPagas = (mesVenda >= parcelas) ? chaves : 0;
-  var investidoAte = entrada + mensalidadesPagas + totalAnuidadesPagas + chavesPagas;
+  var investidoAte = entrada + mensalidadesPagas + totalAnuidadesPagas;
   var taxaMensal = (valorizacaoAno / 100) / 12;
   var valorEstimado = valorImovel * (1 + (taxaMensal * mesVenda));
-  var lucro = valorEstimado - investidoAte;
+  var lucro = valorEstimado - valorImovel;
 
   var msg = "Simulação (Brasil) — Parcelas + Anuidades + Cessão\n\n" +
     "Imóvel: R$ " + valorImovel.toLocaleString('pt-BR') + "\n" +
@@ -794,9 +794,9 @@ function enviarWhatsAppBR() {
     "Anuidades pagas até mês " + mesVenda + ": " + anuidadesPagas + " (R$ " + totalAnuidadesPagas.toLocaleString('pt-BR') + ")\n\n" +
     "Ceder posição no mês: " + mesVenda + "\n" +
     "Valorização/ano: " + valorizacaoAno.toFixed(2) + "%\n" +
-    "Investido até ao mês " + mesVenda + ": R$ " + investidoAte.toLocaleString('pt-BR') + "\n" +
+    "Investimento até ao mês " + mesVenda + " (Entrada+Parcelas+Anuidades): R$ " + investidoAte.toLocaleString('pt-BR') + "\n" +
     "Valor estimado no mês " + mesVenda + ": R$ " + valorEstimado.toLocaleString('pt-BR') + "\n" +
-    "Lucro estimado: R$ " + lucro.toLocaleString('pt-BR') + "\n\n" +
+    "Lucro estimado (Valor estimado - Valor compra): R$ " + lucro.toLocaleString('pt-BR') + "\n\n" +
     "Quero mais informações.";
 
   var url = "https://wa.me/351925708456?text=" + encodeURIComponent(msg);
