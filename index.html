@@ -540,8 +540,9 @@
             <input type="text" id="mensalidade_BR_display" readonly value="" style="width:100%; padding:8px; border-radius:6px; margin-top:4px; background:#1a2a1a; color:#7fff7f; font-weight:700; border:1px solid #2a4a2a; cursor:default;">
           </label><br><br>
 
-          <label>Valor da Anuidade (R$) — você define:<br>
-            <input type="number" id="anuidade_BR" value="7333.33" min="0" step="0.01" oninput="calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          <label>Valor da Anuidade (R$) — calculado automaticamente:<br>
+            <input type="text" id="anuidade_BR_display" readonly value="" style="width:100%; padding:8px; border-radius:6px; margin-top:4px; background:#1a2a1a; color:#7fff7f; font-weight:700; border:1px solid #2a4a2a; cursor:default;">
+            <input type="hidden" id="anuidade_BR" value="7333.33">
           </label><br><br>
 
           <label>Número de Anuidades:<br>
@@ -705,7 +706,6 @@ function calcularBR() {
   var elCh = document.getElementById("chaves_BR");
   if (elCh) elCh.value = chaves.toFixed(2);
   var parcelas = parseInt(document.getElementById("mensalidades_BR").value, 10) || 0;
-  var anuidade = parseFloat(document.getElementById("anuidade_BR").value) || 0;
   var numAnuidades = parseInt(document.getElementById("numAnuidades_BR").value, 10) || 0;
   var valorizacaoAno = parseFloat(document.getElementById("valorizacaoAno_BR").value) || 0;
   var mesVenda = parseInt(document.getElementById("mesVenda_BR").value, 10) || 0;
@@ -725,6 +725,15 @@ function calcularBR() {
   // Atualizar display da mensalidade
   var elMensDisplay = document.getElementById("mensalidade_BR_display");
   if (elMensDisplay) elMensDisplay.value = "R$ " + mensalidade.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  // Anuidade calculada automaticamente (Opção C):
+  // anuidade = (Valor Imóvel − Entrada − Chaves) / Nº Anuidades
+  var anuidade = (numAnuidades > 0) ? (baseMensal / numAnuidades) : 0;
+  // Actualizar campo hidden e display
+  var elAnuHidden = document.getElementById("anuidade_BR");
+  if (elAnuHidden) elAnuHidden.value = anuidade.toFixed(2);
+  var elAnuDisplay = document.getElementById("anuidade_BR_display");
+  if (elAnuDisplay) elAnuDisplay.value = "R$ " + anuidade.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
   var anuidadesPagas = clamp(Math.floor(mesVenda / 12), 0, numAnuidades);
   var totalAnuidadesPagas = anuidadesPagas * anuidade;
   var mensalidadesPagas = mesVenda * mensalidade;
@@ -773,13 +782,15 @@ function enviarWhatsAppBR() {
   var valorImovel = parseFloat(document.getElementById("valorImovel_BR").value) || 0;
   var entrada = parseFloat(document.getElementById("entrada_BR").value) || 0;
   var parcelas = parseInt(document.getElementById("mensalidades_BR").value, 10) || 0;
-  var anuidade = parseFloat(document.getElementById("anuidade_BR").value) || 0;
   var numAnuidades = parseInt(document.getElementById("numAnuidades_BR").value, 10) || 0;
   var valorizacaoAno = parseFloat(document.getElementById("valorizacaoAno_BR").value) || 0;
   var mesVenda = parseInt(document.getElementById("mesVenda_BR").value, 10) || 0;
   var chaves = valorImovel * 0.10;
   mesVenda = clamp(mesVenda, 0, parcelas);
-  var mensalidade = (valorImovel - entrada - chaves) / parcelas;
+  var baseMensal = valorImovel - entrada - chaves;
+  var mensalidade = baseMensal / parcelas;
+  // Anuidade calculada automaticamente (Opção C)
+  var anuidade = (numAnuidades > 0) ? (baseMensal / numAnuidades) : 0;
   var anuidadesPagas = clamp(Math.floor(mesVenda / 12), 0, numAnuidades);
   var totalAnuidadesPagas = anuidadesPagas * anuidade;
   var mensalidadesPagas = mesVenda * mensalidade;
