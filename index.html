@@ -518,11 +518,11 @@
           <h2 style="color:white;">Simulador (Brasil) — Parcelas + Anuidades + Cessão</h2>
 
           <label>Valor do Imóvel (R$):<br>
-            <input type="number" id="valorImovel_BR" value="370000" min="1" required oninput="syncChavesBR(); calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+            <input type="number" id="valorImovel_BR" value="370000" min="1" required oninput="resetMensualManual(); syncChavesBR(); calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
           </label><br><br>
 
-          <label>Entrada (mínimo 10%):<br>
-            <input type="number" id="entrada_BR" value="37000" min="1" required oninput="calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
+          <label>Entrada:<br>
+            <input type="number" id="entrada_BR" value="37000" min="1" required oninput="resetMensualManual(); calcularBR();" style="width:100%; padding:8px; border-radius:6px; margin-top:4px;">
           </label><br><br>
 
           <label>Chaves (10% do valor total — automático):<br>
@@ -530,14 +530,14 @@
           </label><br><br>
 
           <label>Número de parcelas mensais:<br>
-            <select id="mensalidades_BR" onchange="calcularBR();" style="padding:8px; border-radius:6px; width:100%; margin-top:4px;">
+            <select id="mensalidades_BR" onchange="resetMensualManual(); calcularBR();" style="padding:8px; border-radius:6px; width:100%; margin-top:4px;">
               <option value="100">100</option>
               <option value="120">120</option>
               <option value="140" selected>140</option>
             </select>
           </label><br><br>
-          <label>Mensalidade (calculada automaticamente):<br>
-            <input type="text" id="mensalidade_BR_display" readonly value="" style="width:100%; padding:8px; border-radius:6px; margin-top:4px; background:#1a2a1a; color:#7fff7f; font-weight:700; border:1px solid #2a4a2a; cursor:default;">
+          <label>Mensalidade (R$) — editável:<br>
+            <input type="number" id="mensalidade_BR_display" value="" min="0" step="0.01" oninput="calcularBR_fromMensalidade()" style="width:100%; padding:8px; border-radius:6px; margin-top:4px; background:#1a2a1a; color:#7fff7f; font-weight:700; border:1px solid #2a4a2a;">
           </label><br><br>
 
           <label>Valor da Anuidade (R$) — calculado automaticamente:<br>
@@ -714,22 +714,30 @@ function calcularBR() {
   var conv = function(v) { return isEuro ? (v / cambio) : v; };
 
   if (valorImovel <= 0) { alert("Informe um valor de imóvel válido."); return; }
-  if (entrada < valorImovel * 0.10) { alert("A entrada deve ser no mínimo 10% do valor do imóvel."); return; }
   if (!parcelas || parcelas < 1) { alert("Selecione o número de parcelas (100, 120 ou 140)."); return; }
 
   mesVenda = clamp(mesVenda, 0, parcelas);
   document.getElementById("mesVenda_BR").max = String(parcelas);
 
   var baseMensal = valorImovel - entrada - chaves;
-  var mensalidade = baseMensal / parcelas;
-  // Atualizar display da mensalidade
+  // Mensalidade: calcular automaticamente e preencher o campo se estiver vazio ou se vier de calcularBR()
   var elMensDisplay = document.getElementById("mensalidade_BR_display");
-  if (elMensDisplay) elMensDisplay.value = "R$ " + mensalidade.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
+  var mensalidade = baseMensal / parcelas;
+  if (elMensDisplay && (elMensDisplay.dataset.manual !== 'true')) {
+    elMensDisplay.value = mensalidade.toFixed(2);
+  } else if (elMensDisplay && elMensDisplay.dataset.manual === 'true') {
+    // Usar o valor que o utilizador escreveu
+    mensalidade = parseFloat(elMensDisplay.value) || (baseMensal / parcelas);
+  }
 
-  // Anuidade calculada automaticamente (Opção C):
-  // anuidade = (Valor Imóvel − Entrada − Chaves) / Nº Anuidades
-  var anuidade = (numAnuidades > 0) ? (baseMensal / numAnuidades) : 0;
-  // Actualizar campo hidden e display
+  // Anuidade calculada automaticamente a partir da mensalidade definida:
+  // anuidade = (baseMensal - mensalidade * parcelas) / numAnuidades
+  // Mas se mensalidade = baseMensal/parcelas, anuidade = 0. Usamos a fórmula:
+  // Total = entrada + mensalidade*parcelas + anuidade*numAnuidades + chaves = valorImovel
+  // => anuidade*numAnuidades = valorImovel - entrada - chaves - mensalidade*parcelas
+  var totalMensalidades = mensalidade * parcelas;
+  var anuidade = (numAnuidades > 0) ? ((baseMensal - totalMensalidades) / numAnuidades) : 0;
+  // Actualizar campo hidden e display da anuidade
   var elAnuHidden = document.getElementById("anuidade_BR");
   if (elAnuHidden) elAnuHidden.value = anuidade.toFixed(2);
   var elAnuDisplay = document.getElementById("anuidade_BR_display");
@@ -777,6 +785,19 @@ function calcularBR() {
   document.getElementById("rentabilidade_BR").innerHTML = rentabilidadeHTML;
 }
 
+/* Repor modo manual quando muda o imóvel/entrada/parcelas */
+function resetMensualManual() {
+  var elMens = document.getElementById("mensalidade_BR_display");
+  if (elMens) elMens.dataset.manual = 'false';
+}
+
+/* Quando o utilizador edita a mensalidade manualmente */
+function calcularBR_fromMensalidade() {
+  var elMens = document.getElementById("mensalidade_BR_display");
+  if (elMens) elMens.dataset.manual = 'true';
+  calcularBR();
+}
+
 /* WhatsApp BR */
 function enviarWhatsAppBR() {
   var valorImovel = parseFloat(document.getElementById("valorImovel_BR").value) || 0;
@@ -788,9 +809,10 @@ function enviarWhatsAppBR() {
   var chaves = valorImovel * 0.10;
   mesVenda = clamp(mesVenda, 0, parcelas);
   var baseMensal = valorImovel - entrada - chaves;
-  var mensalidade = baseMensal / parcelas;
-  // Anuidade calculada automaticamente (Opção C)
-  var anuidade = (numAnuidades > 0) ? (baseMensal / numAnuidades) : 0;
+  var elMensWA = document.getElementById("mensalidade_BR_display");
+  var mensalidade = (elMensWA && elMensWA.dataset.manual === 'true') ? (parseFloat(elMensWA.value) || baseMensal / parcelas) : baseMensal / parcelas;
+  var totalMensalidadesWA = mensalidade * parcelas;
+  var anuidade = (numAnuidades > 0) ? ((baseMensal - totalMensalidadesWA) / numAnuidades) : 0;
   var anuidadesPagas = clamp(Math.floor(mesVenda / 12), 0, numAnuidades);
   var totalAnuidadesPagas = anuidadesPagas * anuidade;
   var mensalidadesPagas = mesVenda * mensalidade;
@@ -823,6 +845,9 @@ function enviarWhatsAppBR() {
 /* Inicialização */
 document.addEventListener("DOMContentLoaded", function() {
   syncChavesBR();
+  // Inicializar sem modo manual
+  var elMens = document.getElementById("mensalidade_BR_display");
+  if (elMens) elMens.dataset.manual = 'false';
   calcularBR();
 });
 </script>
