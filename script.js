@@ -192,8 +192,8 @@ function formatBRL(val) {
 
 function parseBRL(str) {
   if (!str) return 0;
-  // Remove "R$", espaços, pontos de milhar e substitui vírgula por ponto
-  return parseFloat(str.replace(/R\$\s*/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+  // Remove "R$", todos os espaços (incluindo separadores de milhar como "R$ 92 300,16"), pontos de milhar e substitui vírgula por ponto
+  return parseFloat(str.replace(/R\$\s*/g, '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.')) || 0;
 }
 
 function selecionarEmpreendimento(emp) {
