@@ -186,46 +186,6 @@ let unidadeAtual = null;
 let perspectiva = 'realista';
 const TAXA = { realista: 0.18, conservadora: 0.10 };
 
-// ===== CONTROLO DE ACESSO POR PASSWORD =====
-const PASS_CORRETA = 'dpsimobiliario';
-const PASS_SESSION_KEY = 'dps_sim_auth';
-let empPendente = null;
-
-function pedirPassESelecionar(emp) {
-  // Se já autenticado nesta sessão, avançar directamente
-  if (sessionStorage.getItem(PASS_SESSION_KEY) === '1') {
-    selecionarEmpreendimento(emp);
-    return;
-  }
-  empPendente = emp;
-  const modal = document.getElementById('modal-pass');
-  modal.style.display = 'flex';
-  document.getElementById('pass-input').value = '';
-  document.getElementById('pass-erro').style.display = 'none';
-  setTimeout(() => document.getElementById('pass-input').focus(), 100);
-}
-
-function verificarPass() {
-  const val = document.getElementById('pass-input').value;
-  if (val === PASS_CORRETA) {
-    sessionStorage.setItem(PASS_SESSION_KEY, '1');
-    document.getElementById('modal-pass').style.display = 'none';
-    if (empPendente) {
-      selecionarEmpreendimento(empPendente);
-      empPendente = null;
-    }
-  } else {
-    document.getElementById('pass-erro').style.display = 'block';
-    document.getElementById('pass-input').value = '';
-    document.getElementById('pass-input').focus();
-  }
-}
-
-function fecharModalPass() {
-  document.getElementById('modal-pass').style.display = 'none';
-  empPendente = null;
-}
-
 function formatBRL(val) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
 }
