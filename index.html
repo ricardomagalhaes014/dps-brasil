@@ -544,6 +544,19 @@
   </div>
 </section>
 
+<!-- MODAL DE ACESSO AO SIMULADOR -->
+<div id="modal-pass" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:16px; padding:40px 36px; max-width:400px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="font-size:2.5rem; margin-bottom:12px;">🔒</div>
+    <h3 style="color:#1a2e4a; font-size:1.4rem; margin-bottom:8px;">Acesso Restrito</h3>
+    <p style="color:#666; font-size:0.95rem; margin-bottom:24px;">Este simulador é exclusivo para consultores DPS. Introduza a password de acesso.</p>
+    <input type="password" id="pass-input" placeholder="Password" style="width:100%; padding:12px 16px; border:2px solid #e0e0e0; border-radius:8px; font-size:1rem; outline:none; box-sizing:border-box; margin-bottom:8px;" onkeydown="if(event.key==='Enter') verificarPass()" />
+    <p id="pass-erro" style="color:#e74c3c; font-size:0.85rem; margin-bottom:12px; display:none;">Password incorrecta. Tente novamente.</p>
+    <button onclick="verificarPass()" style="width:100%; padding:13px; background:#c9a84c; color:#fff; border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; margin-bottom:12px;">Entrar</button>
+    <button onclick="fecharModalPass()" style="width:100%; padding:11px; background:transparent; color:#999; border:1px solid #ddd; border-radius:8px; font-size:0.9rem; cursor:pointer;">Cancelar</button>
+  </div>
+</div>
+
 <!-- SIMULADOR -->
 <section class="section-simulador" id="simulador">
   <div class="container">
@@ -557,12 +570,12 @@
     <div class="sim-step" id="sim-step-1">
       <h3 class="sim-step-title">1. Escolha o Empreendimento</h3>
       <div class="sim-emp-grid">
-        <button class="sim-emp-btn active" onclick="selecionarEmpreendimento('evidence')" id="btn-evidence">
+        <button class="sim-emp-btn active" onclick="pedirPassESelecionar('evidence')" id="btn-evidence">
           <span class="sim-emp-flag">🏢</span>
           <span class="sim-emp-name">Evidence Residencial</span>
           <span class="sim-emp-local">Itapema, SC</span>
         </button>
-        <button class="sim-emp-btn" onclick="selecionarEmpreendimento('morata')" id="btn-morata">
+        <button class="sim-emp-btn" onclick="pedirPassESelecionar('morata')" id="btn-morata">
           <span class="sim-emp-flag">🏗️</span>
           <span class="sim-emp-name">Residencial Morata</span>
           <span class="sim-emp-local">Itapema, SC</span>
@@ -857,6 +870,6 @@
   <img id="lightbox-img" src="" alt="Imagem ampliada" />
 </div>
 
-<script src="script.js?v=2"></script>
+<script src="script.js?v=3"></script>
 </body>
 </html>
