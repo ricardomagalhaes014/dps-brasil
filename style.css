@@ -427,6 +427,24 @@ img { max-width: 100%; height: auto; display: block; }
 
 
 /* SECCAO REVENDA - SKY MARINE */
+/* ===== AMAZON RESIDENCE ===== */
+.section-amazon {
+  background: linear-gradient(180deg, #0d1f14 0%, #0d1a0d 50%, #0d1f14 100%);
+  padding: 6rem 0;
+  border-top: 1px solid rgba(46,204,113,0.2);
+}
+.section-amazon .section-header h2 { color: #6ee09a; }
+.section-amazon .section-subtitle { color: rgba(255,255,255,0.8); }
+.section-amazon .revenda-construtora h3 { color: #6ee09a; }
+.section-amazon .revenda-construtora p { color: rgba(255,255,255,0.85); }
+.section-amazon .revenda-oportunidade { background: rgba(255,255,255,0.04); border: 1px solid rgba(46,204,113,0.2); border-radius: 20px; padding: 2.5rem; }
+.section-amazon .oport-text h3 { color: #6ee09a; }
+.section-amazon .oport-lead { color: rgba(255,255,255,0.9); }
+.section-amazon .oport-text p { color: rgba(255,255,255,0.8); }
+.section-amazon .construtora-badge { background: rgba(46,204,113,0.15); color: #6ee09a; border: 1px solid rgba(46,204,113,0.3); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: inline-block; margin-bottom: 0.5rem; }
+.section-amazon .destaque-item { background: rgba(46,204,113,0.08); border-left: 3px solid #2ecc71; color: rgba(255,255,255,0.85); padding: 0.5rem 0.8rem; border-radius: 0 8px 8px 0; font-size: 0.9rem; }
+.section-amazon .oport-cta-text { color: rgba(255,255,255,0.8); }
+
 .section-revenda {
   padding: 5rem 0;
   background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0d1b2a 100%);
